@@ -7,15 +7,6 @@ provider "aws" {
     region     = "${var.region}"
 }
 
-data "terraform_remote_state" "vpc" {
-    backend = "s3"
-    config {
-        bucket = "${var.vpc_bucket}"
-        key    = "${var.vpc_key}"
-        region = "${var.vpc_region}"
-    }
-}
-
 # === construct a role that allows auto-registration of EC2 instances to Route53
 resource "aws_iam_role" "dynamic_dns" {
     name_prefix        = "dynamic-dns-"
