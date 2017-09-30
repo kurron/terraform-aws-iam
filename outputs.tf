@@ -1,44 +1,54 @@
-output "vpc_id" {
-    value = "${aws_vpc.main.id}"
-    description = "ID of the generated VPC"
+output "default_ecs_role_id" {
+    value = "${aws_iam_role.default_ecs_role.id}"
+    description = "ID for the ECS role"
 }
 
-output "cidr" {
-    value = "${aws_vpc.main.cidr_block}"
-    description = "The VPC's network range expressed in CIDR notation"
+output "arn" {
+    value = "${aws_iam_role.default_ecs_role.arn}"
+    description = "ARN for the ECS role"
 }
 
-output "main_route_table_id" {
-    value = "${aws_vpc.main.main_route_table_id}"
-    description = "ID of the VPC's main route table"
+output "profile" {
+    value = "${aws_iam_instance_profile.default_ecs.id}"
+    description = "ID for the ECS profile"
 }
 
-output "default_network_acl_id" {
-    value = "${aws_vpc.main.default_network_acl_id}"
-    description = "ID of the VPC's default network ACL"
+output "cross_account_ecr_pull_role_id" {
+    value = "${aws_iam_role.cross_account_ecr_pull_role.id}"
+    description = "ID for the cross-account ECR pulling role"
 }
 
-output "default_security_group_id" {
-    value = "${aws_vpc.main.default_security_group_id}"
-    description = "ID of the VPC's default security group"
+output "cross_account_ecr_pull_role_arn" {
+    value = "${aws_iam_role.cross_account_ecr_pull_role.arn}"
+    description = "ARN for the cross-account ECR pulling role"
 }
 
-output "default_route_table_id" {
-    value = "${aws_vpc.main.default_route_table_id}"
-    description = "ID of the VPC's default route table"
+output "cross_account_ecr_pull_profile_id" {
+    value = "${aws_iam_instance_profile.cross_account_ecr_pull_profile.id}"
+    description = "ID for the cross-account ECR pulling profile"
 }
 
-output "public_subnet_ids" {
-    value = ["${aws_subnet.public.*.id}"]
-    description = "IDs of the VPC's public subnets"
+output "start_stop_role_id" {
+    value = "${aws_iam_role.ec2_start_stop.id}"
+    description = "ID for the EC2 start/stop role"
 }
 
-output "private_subnet_ids" {
-    value = ["${aws_subnet.private.*.id}"]
-    description = "IDs of the VPC's private subnets"
+output "start_stop_role_arn" {
+    value = "${aws_iam_role.ec2_start_stop.arn}"
+    description = "ARN for the EC2 start/stop role"
 }
 
-output "availability_zones" {
-    value = ["${aws_subnet.public.*.availability_zone}"]
-    description = "AZs the VPC has subnets in"
+output "start_stop_profile_id" {
+    value = "${aws_iam_instance_profile.ec2_start_stop.id}"
+    description = "ID for the EC2 start/stop profile"
+}
+
+output "dynamic_dns_role_id" {
+    value = "${aws_iam_role.dynamic_dns.id}"
+    description = "ID for the dynamic DNS role"
+}
+
+output "dynamic_dns_role_arn" {
+    value = "${aws_iam_role.dynamic_dns.arn}"
+    description = "ARN for the dynamic DNS role"
 }

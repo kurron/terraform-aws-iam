@@ -1,7 +1,5 @@
 # Overview
-This Terraform module is an opinionated view on how to build a VPC.  It places
-both a public and private subnet in all availability zones.  This is for both
-fault tolerance as well as to draw on a larger market for Spot intances.
+This Terraform module is ...
 
 # Prerequisites
 * [Terraform](https://terraform.io/) installed and working

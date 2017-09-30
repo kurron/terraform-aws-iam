@@ -7,133 +7,84 @@ provider "aws" {
     region     = "${var.region}"
 }
 
-data "aws_availability_zones" "available" {
-    state = "available"
-}
-
-resource "aws_vpc" "main" {
-    cidr_block           = "${var.cidr_range}"
-    enable_dns_hostnames = true
-    tags {
-        Name        = "${var.name}"
-        Project     = "${var.project}"
-        Purpose     = "${var.purpose}"
-        Creator     = "${var.creator}"
-        Environment = "${var.environment}"
-        Freetext    = "${var.freetext}"
+data "terraform_remote_state" "vpc" {
+    backend = "s3"
+    config {
+        bucket = "${var.vpc_bucket}"
+        key    = "${var.vpc_key}"
+        region = "${var.vpc_region}"
     }
 }
 
-resource "aws_eip" "nat" {
-    count = "${length( data.aws_availability_zones.available.names )}"
-    vpc   = true
+# === construct a role that allows auto-registration of EC2 instances to Route53
+resource "aws_iam_role" "dynamic_dns" {
+    name_prefix        = "dynamic-dns-"
+    description        = "Allows Lambda instances to assume required roles"
+    assume_role_policy = "${file( "${path.module}/files/ddns-trust.json" )}"
 }
 
-resource "aws_internet_gateway" "main" {
-    vpc_id = "${aws_vpc.main.id}"
-    tags {
-        Name        = "${var.name}"
-        Project     = "${var.project}"
-        Purpose     = "Routes traffic from the internet to the public subnets"
-        Creator     = "${var.creator}"
-        Environment = "${var.environment}"
-        Freetext    = "${var.freetext}"
-    }
+resource "aws_iam_role_policy" "dynamic_dns" {
+    name_prefix = "dynamic-dns-"
+    role        = "${aws_iam_role.dynamic_dns.id}"
+    policy      = "${file("${path.module}/files/ddns-policy.json")}"
 }
 
-resource "aws_nat_gateway" "main" {
-    count         = "${length( data.aws_availability_zones.available.names )}"
-    allocation_id = "${element( aws_eip.nat.*.id, count.index) }"
-    subnet_id     = "${element( aws_subnet.public.*.id, count.index )}"
-    depends_on    = ["aws_internet_gateway.main"]
-    tags {
-        Name        = "${var.name} ${format( "NAT %02d", count.index+1 )}"
-        Project     = "${var.project}"
-        Purpose     = "Allows for outbound internet traffic from the private subnets"
-        Creator     = "${var.creator}"
-        Environment = "${var.environment}"
-        Freetext    = "${var.freetext}"
-    }
+# === construct a role that allows starting/stopping EC2 instances on a schedule
+resource "aws_iam_role" "ec2_start_stop" {
+    name_prefix        = "start-stop-"
+    description        = "Allows Lambda instances to assume required roles"
+    assume_role_policy = "${file( "${path.module}/files/ec2-start-stop-assumption-policy.json" )}"
 }
 
-resource "aws_subnet" "public" {
-    availability_zone       = "${element( data.aws_availability_zones.available.names, count.index )}"
-    cidr_block              = "${element( var.public_subnets, count.index )}"
-    vpc_id                  = "${aws_vpc.main.id}"
-    map_public_ip_on_launch = true
-    count                   = "${length( data.aws_availability_zones.available.names )}"
-    tags {
-        Name        = "${var.name} ${format( "Public %02d", count.index+1 )}"
-        Project     = "${var.project}"
-        Purpose     = "House instances that can be contacted directly from the internet"
-        Creator     = "${var.creator}"
-        Environment = "${var.environment}"
-        Freetext    = "Allows for incoming traffic from the internet"
-    }
+resource "aws_iam_role_policy" "ec2_start_stop" {
+    name_prefix = "start-stop-"
+    role        = "${aws_iam_role.ec2_start_stop.id}"
+    policy      = "${file("${path.module}/files/ec2-start-stop-policy.json")}"
 }
 
-resource "aws_subnet" "private" {
-    availability_zone       = "${element( data.aws_availability_zones.available.names, count.index )}"
-    cidr_block              = "${element( var.private_subnets, count.index )}"
-    vpc_id                  = "${aws_vpc.main.id}"
-    map_public_ip_on_launch = false
-    count                   = "${length( data.aws_availability_zones.available.names )}"
-    tags {
-        Name        = "${var.name} ${format( "Private %02d", count.index+1 )}"
-        Project     = "${var.project}"
-        Purpose     = "House instances that can't be contacted directly from the internet"
-        Creator     = "${var.creator}"
-        Environment = "${var.environment}"
-        Freetext    = "Direct connections from the internet are not allowed"
-    }
+resource "aws_iam_instance_profile" "ec2_start_stop" {
+    name_prefix = "start-stop-"
+    role  = "${aws_iam_role.ec2_start_stop.name}"
 }
 
-resource "aws_route_table" "public" {
-    vpc_id = "${aws_vpc.main.id}"
-    tags {
-        Name        = "${var.name} Public"
-        Project     = "${var.project}"
-        Purpose     = "Handles routing of public subnet instances"
-        Creator     = "${var.creator}"
-        Environment = "${var.environment}"
-        Freetext    = "No notes yet."
-    }
+# === construct a role that allows pulling from ECR
+resource "aws_iam_role" "cross_account_ecr_pull_role" {
+    name_prefix        = "ecr-pull-"
+    description        = "Allows EC2 instances to assume required roles"
+    assume_role_policy = "${file( "${path.module}/files/ecr-pull-only-assumption-policy.json" )}"
 }
 
-resource "aws_route" "public" {
-    route_table_id         = "${element( aws_route_table.public.*.id, count.index )}"
-    destination_cidr_block = "0.0.0.0/0"
-    gateway_id             = "${aws_internet_gateway.main.id}"
+resource "aws_iam_role_policy" "cross_account_ecr_pull_role_policy" {
+    name_prefix = "ecr-pull-"
+    role        = "${aws_iam_role.cross_account_ecr_pull_role.id}"
+    policy      = "${file("${path.module}/files/ecr-pull-only-policy.json")}"
 }
 
-resource "aws_route_table_association" "public" {
-    count          = "${length( data.aws_availability_zones.available.names )}"
-    subnet_id      = "${element( aws_subnet.public.*.id, count.index )}"
-    route_table_id = "${element( aws_route_table.public.*.id, count.index )}"
+resource "aws_iam_instance_profile" "cross_account_ecr_pull_profile" {
+    name_prefix = "ecr-pull-"
+    role  = "${aws_iam_role.cross_account_ecr_pull_role.name}"
 }
 
-resource "aws_route_table" "private" {
-    count  = "${length( data.aws_availability_zones.available.names ) }"
-    vpc_id = "${aws_vpc.main.id}"
-    tags {
-        Name        = "${var.name} Private ${format("%02d", count.index+1 )}"
-        Project     = "${var.project}"
-        Purpose     = "Handles routing of private subnet instances"
-        Creator     = "${var.creator}"
-        Environment = "${var.environment}"
-        Freetext    = "No notes yet."
-    }
+# construct a role that allow ECS instances to interact with load balancers
+resource "aws_iam_role" "default_ecs_role" {
+    name_prefix = "ecs-role"
+    description = "Allows ECS workers to assume required roles"
+    assume_role_policy = "${file( "${path.module}/files/default-ecs-role-policy.json" )}"
 }
 
-resource "aws_route" "private" {
-    count                  = "${length( compact( data.aws_availability_zones.available.names ) )}"
-    route_table_id         = "${element( aws_route_table.private.*.id, count.index )}"
-    destination_cidr_block = "0.0.0.0/0"
-    nat_gateway_id         = "${element( aws_nat_gateway.main.*.id, count.index )}"
+resource "aws_iam_role_policy" "default_ecs_service_role_policy" {
+    name_prefix = "ecs-service-role-${var.project}-${var.environment}-"
+    role = "${aws_iam_role.default_ecs_role.id}"
+    policy = "${file( "${path.module}/files/default-ecs-service-role-policy.json" )}"
 }
 
-resource "aws_route_table_association" "private" {
-    count          = "${length( data.aws_availability_zones.available.names )}"
-    subnet_id      = "${element( aws_subnet.private.*.id, count.index) }"
-    route_table_id = "${element( aws_route_table.private.*.id, count.index) }"
+resource "aws_iam_role_policy" "default_ecs_instance_role_policy" {
+    name_prefix = "ecs-instance-role-policy-${var.project}-${var.environment}-"
+    role = "${aws_iam_role.default_ecs_role.id}"
+    policy = "${file( "${path.module}/files/default-ecs-instance-role-policy.json" )}"
+}
+
+resource "aws_iam_instance_profile" "default_ecs" {
+    name_prefix = "ecs-instance-profile-${var.project}-${var.environment}-"
+    role  = "${aws_iam_role.default_ecs_role.name}"
 }
