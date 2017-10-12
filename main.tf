@@ -11,31 +11,31 @@ provider "aws" {
 resource "aws_iam_role" "dynamic_dns" {
     name_prefix        = "dynamic-dns-"
     description        = "Allows Lambda instances to assume required roles"
-    assume_role_policy = "${file( "${path.module}/files/ddns-trust.json" )}"
+    assume_role_policy = "${file( "${path.module}/files/dynamic-dns/trust.json" )}"
 }
 
 resource "aws_iam_role_policy" "dynamic_dns" {
     name_prefix = "dynamic-dns-"
     role        = "${aws_iam_role.dynamic_dns.id}"
-    policy      = "${file("${path.module}/files/ddns-policy.json")}"
+    policy      = "${file("${path.module}/files/dynamic-dns/permissions.json")}"
 }
 
 # === construct a role that allows starting/stopping EC2 instances on a schedule
 resource "aws_iam_role" "ec2_start_stop" {
     name_prefix        = "start-stop-"
     description        = "Allows Lambda instances to assume required roles"
-    assume_role_policy = "${file( "${path.module}/files/ec2-start-stop-assumption-policy.json" )}"
+    assume_role_policy = "${file( "${path.module}/files/ec2-start-stop/trust.json" )}"
 }
 
 resource "aws_iam_role_policy" "ec2_start_stop" {
     name_prefix = "start-stop-"
     role        = "${aws_iam_role.ec2_start_stop.id}"
-    policy      = "${file("${path.module}/files/ec2-start-stop-policy.json")}"
+    policy      = "${file("${path.module}/files/ec2-start-stop/permissions.json")}"
 }
 
 resource "aws_iam_instance_profile" "ec2_start_stop" {
     name_prefix = "start-stop-"
-    role  = "${aws_iam_role.ec2_start_stop.name}"
+    role        = "${aws_iam_role.ec2_start_stop.name}"
 }
 
 # === construct a role that allows pulling from ECR
