@@ -42,18 +42,18 @@ resource "aws_iam_instance_profile" "ec2_start_stop" {
 resource "aws_iam_role" "cross_account_ecr_pull_role" {
     name_prefix        = "ecr-pull-"
     description        = "Allows EC2 instances to assume required roles"
-    assume_role_policy = "${file( "${path.module}/files/ecr-pull-only-assumption-policy.json" )}"
+    assume_role_policy = "${file( "${path.module}/files/ecr-pull/trust.json" )}"
 }
 
 resource "aws_iam_role_policy" "cross_account_ecr_pull_role_policy" {
     name_prefix = "ecr-pull-"
     role        = "${aws_iam_role.cross_account_ecr_pull_role.id}"
-    policy      = "${file("${path.module}/files/ecr-pull-only-policy.json")}"
+    policy      = "${file("${path.module}/files/ecr-pull/permissions.json")}"
 }
 
 resource "aws_iam_instance_profile" "cross_account_ecr_pull_profile" {
     name_prefix = "ecr-pull-"
-    role  = "${aws_iam_role.cross_account_ecr_pull_role.name}"
+    role        = "${aws_iam_role.cross_account_ecr_pull_role.name}"
 }
 
 # construct a role that allow ECS instances to interact with load balancers
