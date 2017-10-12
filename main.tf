@@ -60,22 +60,16 @@ resource "aws_iam_instance_profile" "cross_account_ecr_pull_profile" {
 resource "aws_iam_role" "default_ecs_role" {
     name_prefix = "ecs-role"
     description = "Allows ECS workers to assume required roles"
-    assume_role_policy = "${file( "${path.module}/files/default-ecs-role-policy.json" )}"
+    assume_role_policy = "${file( "${path.module}/files/ecs/trust.json" )}"
 }
 
 resource "aws_iam_role_policy" "default_ecs_service_role_policy" {
     name_prefix = "ecs-service-role-${var.project}-${var.environment}-"
     role = "${aws_iam_role.default_ecs_role.id}"
-    policy = "${file( "${path.module}/files/default-ecs-service-role-policy.json" )}"
-}
-
-resource "aws_iam_role_policy" "default_ecs_instance_role_policy" {
-    name_prefix = "ecs-instance-role-policy-${var.project}-${var.environment}-"
-    role = "${aws_iam_role.default_ecs_role.id}"
-    policy = "${file( "${path.module}/files/default-ecs-instance-role-policy.json" )}"
+    policy = "${file( "${path.module}/files/ecs/permissions.json" )}"
 }
 
 resource "aws_iam_instance_profile" "default_ecs" {
     name_prefix = "ecs-instance-profile-${var.project}-${var.environment}-"
-    role  = "${aws_iam_role.default_ecs_role.name}"
+    role        = "${aws_iam_role.default_ecs_role.name}"
 }
