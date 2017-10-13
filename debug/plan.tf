@@ -11,16 +11,16 @@ module "iam" {
     environment = "development"
 }
 
-output "default_ecs_role_id" {
-    value = "${module.iam.default_ecs_role_id}"
+output "ecs_role_id" {
+    value = "${module.iam.ecs_role_id}"
 }
 
-output "arn" {
-    value = "${module.iam.arn}"
+output "ecs_role_arn" {
+    value = "${module.iam.ecs_role_arn}"
 }
 
-output "profile" {
-    value = "${module.iam.profile}"
+output "ecs_role_profile" {
+    value = "${module.iam.ecs_role_profile}"
 }
 
 output "cross_account_ecr_pull_role_id" {
