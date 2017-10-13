@@ -28,19 +28,19 @@ output "cross_account_ecr_pull_profile_id" {
     description = "ID for the cross-account ECR pulling profile"
 }
 
-output "start_stop_role_id" {
-    value = "${aws_iam_role.ec2_start_stop.id}"
-    description = "ID for the EC2 start/stop role"
+output "ec2_park_role_id" {
+    value = "${aws_iam_role.ec2_park.id}"
+    description = "ID for the EC2 park role"
 }
 
-output "start_stop_role_arn" {
-    value = "${aws_iam_role.ec2_start_stop.arn}"
-    description = "ARN for the EC2 start/stop role"
+output "ec2_park_role_arn" {
+    value = "${aws_iam_role.ec2_park.arn}"
+    description = "ARN for the EC2 park role"
 }
 
-output "start_stop_profile_id" {
-    value = "${aws_iam_instance_profile.ec2_start_stop.id}"
-    description = "ID for the EC2 start/stop profile"
+output "ec2_park_profile_id" {
+    value = "${aws_iam_instance_profile.ec2_park.id}"
+    description = "ID for the EC2 park profile"
 }
 
 output "dynamic_dns_role_id" {

@@ -35,16 +35,16 @@ output "cross_account_ecr_pull_profile_id" {
     value = "${module.iam.cross_account_ecr_pull_profile_id}"
 }
 
-output "start_stop_role_id" {
-    value = "${module.iam.start_stop_role_id}"
+output "ec2_park_role_id" {
+    value = "${module.iam.ec2_park_role_id}"
 }
 
-output "start_stop_role_arn" {
-    value = "${module.iam.start_stop_role_arn}"
+output "ec2_park_role_arn" {
+    value = "${module.iam.ec2_park_role_arn}"
 }
 
-output "start_stop_profile_id" {
-    value = "${module.iam.start_stop_profile_id}"
+output "ec2_park_profile_id" {
+    value = "${module.iam.ec2_park_profile_id}"
 }
 
 output "dynamic_dns_role_id" {

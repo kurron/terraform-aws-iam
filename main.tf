@@ -21,21 +21,21 @@ resource "aws_iam_role_policy" "dynamic_dns" {
 }
 
 # === construct a role that allows starting/stopping EC2 instances on a schedule
-resource "aws_iam_role" "ec2_start_stop" {
-    name_prefix        = "start-stop-"
+resource "aws_iam_role" "ec2_park" {
+    name_prefix        = "ec2-park-"
     description        = "Allows Lambda instances to assume required roles"
-    assume_role_policy = "${file( "${path.module}/files/ec2-start-stop/trust.json" )}"
+    assume_role_policy = "${file( "${path.module}/files/ec2-park/trust.json" )}"
 }
 
-resource "aws_iam_role_policy" "ec2_start_stop" {
-    name_prefix = "start-stop-"
-    role        = "${aws_iam_role.ec2_start_stop.id}"
-    policy      = "${file("${path.module}/files/ec2-start-stop/permissions.json")}"
+resource "aws_iam_role_policy" "ec2_park" {
+    name_prefix = "ec2-park-"
+    role        = "${aws_iam_role.ec2_park.id}"
+    policy      = "${file("${path.module}/files/ec2-park/permissions.json")}"
 }
 
-resource "aws_iam_instance_profile" "ec2_start_stop" {
-    name_prefix = "start-stop-"
-    role        = "${aws_iam_role.ec2_start_stop.name}"
+resource "aws_iam_instance_profile" "ec2_park" {
+    name_prefix = "park-"
+    role        = "${aws_iam_role.ec2_park.name}"
 }
 
 # === construct a role that allows pulling from ECR
