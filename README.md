@@ -1,5 +1,11 @@
 # Overview
-This Terraform module is ...
+This Terraform module creates a collection of IAM roles that can be used in
+a variety of situations.
+
+Created roles include:
+* allows a Lambda function to "park" EC2 instances by stopping them
+* allows for pulling Docker images from ECR
+* allows EC2 instances to interact with load balancers
 
 # Prerequisites
 * [Terraform](https://terraform.io/) installed and working
@@ -14,6 +20,11 @@ the module.  See [kurron/terraform-environments](https://github.com/kurron/terra
 for example usage.
 
 # Tips and Tricks
+
+## Debugging
+The `debug` folder contains files that can be used to test out local changes
+to the module.  Edit `backend.cfg` and `plan.tf` to your liking and
+then run `debug/debug-module.sh` to test your changes.
 
 # Troubleshooting
 
