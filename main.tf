@@ -38,22 +38,22 @@ resource "aws_iam_instance_profile" "ec2_park" {
     role        = "${aws_iam_role.ec2_park.name}"
 }
 
-# === construct a role that allows pulling from ECR
-resource "aws_iam_role" "cross_account_ecr_pull_role" {
-    name_prefix        = "ecr-pull-"
-    description        = "Allows EC2 instances to assume required roles"
-    assume_role_policy = "${file( "${path.module}/files/ecr-pull/trust.json" )}"
+# === construct a role that allows EC2 to perform Docker related operations
+resource "aws_iam_role" "docker_role" {
+    name_prefix        = "docker-"
+    description        = "Allows EC2 instances to perform Docker related tasks"
+    assume_role_policy = "${file( "${path.module}/files/docker/trust.json" )}"
 }
 
-resource "aws_iam_role_policy" "cross_account_ecr_pull_role_policy" {
-    name_prefix = "ecr-pull-"
-    role        = "${aws_iam_role.cross_account_ecr_pull_role.id}"
-    policy      = "${file("${path.module}/files/ecr-pull/permissions.json")}"
+resource "aws_iam_role_policy" "docker_role_policy" {
+    name_prefix = "docker-"
+    role        = "${aws_iam_role.docker_role.id}"
+    policy      = "${file("${path.module}/files/docker/permissions.json")}"
 }
 
-resource "aws_iam_instance_profile" "cross_account_ecr_pull_profile" {
-    name_prefix = "ecr-pull-"
-    role        = "${aws_iam_role.cross_account_ecr_pull_role.name}"
+resource "aws_iam_instance_profile" "docker_profile" {
+    name_prefix = "docker-"
+    role        = "${aws_iam_role.docker_role.name}"
 }
 
 # construct a role that allow ECS instances to interact with load balancers

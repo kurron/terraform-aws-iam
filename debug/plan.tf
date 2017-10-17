@@ -23,16 +23,16 @@ output "ecs_role_profile" {
     value = "${module.iam.ecs_role_profile}"
 }
 
-output "cross_account_ecr_pull_role_id" {
-    value = "${module.iam.cross_account_ecr_pull_role_id}"
+output "docker_role_id" {
+    value = "${module.iam.docker_role_id}"
 }
 
-output "cross_account_ecr_pull_role_arn" {
-    value = "${module.iam.cross_account_ecr_pull_role_arn}"
+output "docker_role_arn" {
+    value = "${module.iam.docker_role_arn}"
 }
 
-output "cross_account_ecr_pull_profile_id" {
-    value = "${module.iam.cross_account_ecr_pull_profile_id}"
+output "docker_profile_id" {
+    value = "${module.iam.docker_profile_id}"
 }
 
 output "ec2_park_role_id" {

@@ -13,19 +13,19 @@ output "ecs_role_profile" {
     description = "ID for the ECS profile"
 }
 
-output "cross_account_ecr_pull_role_id" {
-    value = "${aws_iam_role.cross_account_ecr_pull_role.id}"
-    description = "ID for the cross-account ECR pulling role"
+output "docker_role_id" {
+    value = "${aws_iam_role.docker_role.id}"
+    description = "ID for the EC2 Docker role"
 }
 
-output "cross_account_ecr_pull_role_arn" {
-    value = "${aws_iam_role.cross_account_ecr_pull_role.arn}"
-    description = "ARN for the cross-account ECR pulling role"
+output "docker_role_arn" {
+    value = "${aws_iam_role.docker_role.arn}"
+    description = "ARN for the EC2 Docker role"
 }
 
-output "cross_account_ecr_pull_profile_id" {
-    value = "${aws_iam_instance_profile.cross_account_ecr_pull_profile.id}"
-    description = "ID for the cross-account ECR pulling profile"
+output "docker_profile_id" {
+    value = "${aws_iam_instance_profile.docker_profile.id}"
+    description = "ID for the EC2 Docker profile"
 }
 
 output "ec2_park_role_id" {

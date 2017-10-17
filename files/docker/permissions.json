@@ -10,7 +10,9 @@
                 "ecr:GetAuthorizationToken",
                 "ecr:GetDownloadUrlForLayer",
                 "ecr:BatchGetImage",
-                "ecr:BatchCheckLayerAvailability"
+                "ecr:BatchCheckLayerAvailability",
+                "logs:CreateLogStream",
+                "logs:PutLogEvents"
             ]
         }
     ]
