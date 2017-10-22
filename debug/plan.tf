@@ -19,8 +19,8 @@ output "ecs_role_arn" {
     value = "${module.iam.ecs_role_arn}"
 }
 
-output "ecs_role_profile" {
-    value = "${module.iam.ecs_role_profile}"
+output "ecs_profile_id" {
+    value = "${module.iam.ecs_profile_id}"
 }
 
 output "docker_role_id" {

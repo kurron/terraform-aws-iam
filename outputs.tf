@@ -8,7 +8,7 @@ output "ecs_role_arn" {
     description = "ARN for the ECS role"
 }
 
-output "ecs_role_profile" {
+output "ecs_profile_id" {
     value = "${aws_iam_instance_profile.default_ecs.id}"
     description = "ID for the ECS profile"
 }
