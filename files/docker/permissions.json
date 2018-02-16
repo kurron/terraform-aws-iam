@@ -12,7 +12,8 @@
                 "ecr:BatchGetImage",
                 "ecr:BatchCheckLayerAvailability",
                 "logs:CreateLogStream",
-                "logs:PutLogEvents"
+                "logs:PutLogEvents",
+                "sns:Publish"
             ]
         }
     ]
