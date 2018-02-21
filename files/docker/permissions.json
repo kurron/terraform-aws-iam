@@ -13,10 +13,10 @@
                 "ecr:BatchCheckLayerAvailability",
                 "logs:CreateLogStream",
                 "logs:PutLogEvents",
-                "sns:Publish",
+                "sns:ListTopics",
                 "sns:Publish",
                 "s3:ListBucket",
-                "s3:ListTopics",
+                "s3:ListObjects",
                 "s3:AbortMultipartUpload",
                 "s3:PutObject"
             ]
