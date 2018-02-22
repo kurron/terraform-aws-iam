@@ -73,3 +73,21 @@ resource "aws_iam_instance_profile" "default_ecs" {
     name_prefix = "ecs-instance-profile-${var.project}-${var.environment}-"
     role        = "${aws_iam_role.default_ecs_role.name}"
 }
+
+# === construct a role that allows starting a batch process on a schedule
+resource "aws_iam_role" "batch_job_trigger" {
+    name_prefix        = "batch-job-trigger-"
+    description        = "Allows Lambda instances to assume required roles"
+    assume_role_policy = "${file( "${path.module}/files/batch-job-trigger/trust.json" )}"
+}
+
+resource "aws_iam_role_policy" "batch_job_trigger" {
+    name_prefix = "batch-job-trigger-"
+    role        = "${aws_iam_role.batch_job_trigger.id}"
+    policy      = "${file("${path.module}/files/batch-job-trigger/permissions.json")}"
+}
+
+resource "aws_iam_instance_profile" "batch_job_trigger" {
+    name_prefix = "batch-job-trigger-"
+    role        = "${aws_iam_role.batch_job_trigger.name}"
+}

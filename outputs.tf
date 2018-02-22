@@ -52,3 +52,18 @@ output "dynamic_dns_role_arn" {
     value = "${aws_iam_role.dynamic_dns.arn}"
     description = "ARN for the dynamic DNS role"
 }
+
+output "batch_job_trigger_id" {
+    value = "${aws_iam_role.batch_job_trigger.id}"
+    description = "ID for the batch job trigger role"
+}
+
+output "batch_job_trigger_role_arn" {
+    value = "${aws_iam_role.batch_job_trigger.arn}"
+    description = "ARN for the batch job trigger role"
+}
+
+output "batch_job_trigger_profile_id" {
+    value = "${aws_iam_instance_profile.batch_job_trigger.id}"
+    description = "ID for the batch job trigger profile"
+}

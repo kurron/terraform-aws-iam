@@ -54,3 +54,15 @@ output "dynamic_dns_role_id" {
 output "dynamic_dns_role_arn" {
     value = "${module.iam.dynamic_dns_role_arn}"
 }
+
+output "batch_job_trigger_id" {
+    value = "${module.iam.batch_job_trigger_id}"
+}
+
+output "batch_job_trigger_role_arn" {
+    value = "${module.iam.batch_job_trigger_role_arn}"
+}
+
+output "batch_job_trigger_profile_id" {
+    value = "${module.iam.batch_job_trigger_profile_id}"
+}
